@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
 
-export default function MovieForm() {
+export default function MovieForm({addMovie}) {
 
     const [name, setName] = useState('')
     const [genre, setGenre] = useState('')
@@ -13,10 +13,33 @@ export default function MovieForm() {
                             .then(actorApi => setActors(actorApi))
 
     const actorOptions = () => {return actors.map(actor => 
-        {return (<option>{actor.name}</option>)}
+        {return (<option key={actor.id} value={actor.id}>{actor.name}</option>)}
     )}
 
     useEffect(getActors, [])
+
+    const handleSubmit = event => {
+        event.preventDefault()
+
+        const bodyInfo = {
+            name,
+            genre,
+            actor_id: selectedActor
+        }
+        const movieOption = {
+            method : "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(bodyInfo)
+        }
+
+
+        fetch('http://localhost:3000/movies', movieOption)
+            .then(response => response.json())
+            .then(addMovie)
+    }
 
     return (
         <form className='movie-form' onSubmit={handleSubmit}>
@@ -42,6 +65,7 @@ export default function MovieForm() {
                 value={selectedActor} 
                 onChange={event => setSelectedActor(event.target.value)}>
                 {actorOptions()}
+                <option value=''>Select Actor</option>
             </select>
             {/* <label value="">Add actor</label> */}
             <input type="submit" value="Add Movie"/>

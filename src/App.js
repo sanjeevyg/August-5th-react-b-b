@@ -13,10 +13,12 @@ function App() {
     .then(response => response.json())
     .then(movie => setState(movie)), []
   )
+
+  const addMovie = newMovie => setState([...movies, newMovie])
   return (
     <div className="App">
       <MovieContainer movies={movies}/>
-      <MovieForm />
+      <MovieForm addMovie={addMovie}/>
     </div>
   );
 }
